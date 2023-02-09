@@ -1,12 +1,12 @@
 """Export flow to python requests."""
 
 from mitmproxy import flow
-from mitmproxy.addons.export import formats, cleanup_request, pop_headers
+from mitmproxy.addons import export
 
 
 def python_script(f: flow.Flow) -> str:
-    request = cleanup_request(f)
-    request = pop_headers(request)
+    request = export.cleanup_request(f)
+    request = export.pop_headers(request)
 
     url = repr(request.pretty_url)
     method = request.method.lower()
@@ -21,4 +21,9 @@ def python_script(f: flow.Flow) -> str:
     return script
 
 
-formats["python_requests"] = python_script
+class Export2Python:
+    def running(self):
+        export.formats["python_requests"] = python_script
+
+
+addons = [Export2Python()]
